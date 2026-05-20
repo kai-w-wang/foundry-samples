@@ -16,35 +16,35 @@ This enables:
 Architecture:
   Private VNet → AI Services (private) → Data Proxy → Private VNet → Backend Resources
 */
-@description('Location for all resources.')
-@allowed([
-  'westus'
-  'westus2'
-  'eastus'
-  'eastus2'
-  'japaneast'
-  'francecentral'
-  'spaincentral'
-  'uaenorth'
-  'southcentralus'
-  'italynorth'
-  'germanywestcentral'
-  'brazilsouth'
-  'southafricanorth'
-  'australiaeast'
-  'swedencentral'
-  'canadaeast'
-  'westeurope'
-  'westus3'
-  'uksouth'
-  'southindia'
+// @description('Location for all resources.')
+// @allowed([
+//   'westus'
+//   'westus2'
+//   'eastus'
+//   'eastus2'
+//   'japaneast'
+//   'francecentral'
+//   'spaincentral'
+//   'uaenorth'
+//   'southcentralus'
+//   'italynorth'
+//   'germanywestcentral'
+//   'brazilsouth'
+//   'southafricanorth'
+//   'australiaeast'
+//   'swedencentral'
+//   'canadaeast'
+//   'westeurope'
+//   'westus3'
+//   'uksouth'
+//   'southindia'
 
-  //only class B and C
-  'koreacentral'
-  'polandcentral'
-  'switzerlandnorth'
-  'norwayeast'
-])
+//   //only class B and C
+//   'koreacentral'
+//   'polandcentral'
+//   'switzerlandnorth'
+//   'norwayeast'
+// ])
 param location string = 'eastus2'
 
 @description('Name for your AI Services resource.')
@@ -64,8 +64,8 @@ param modelCapacity int = 30
 
 // Create a short, unique suffix, that will be unique to each resource group
 param deploymentTimestamp string = utcNow('yyyyMMddHHmmss')
-var uniqueSuffix = substring(uniqueString('${resourceGroup().id}-${deploymentTimestamp}'), 0, 4)
-var accountName = toLower('${aiServices}${uniqueSuffix}')
+param uniqueSuffix string = substring(uniqueString('${resourceGroup().id}-${deploymentTimestamp}'), 0, 4)
+param accountName string = toLower('${aiServices}${uniqueSuffix}')
 
 @description('Name for your project resource.')
 param firstProjectName string = 'project'
@@ -94,7 +94,7 @@ param mcpSubnetName string = 'mcp-subnet'
 param existingVnetResourceId string = ''
 
 @description('Address space for the VNet (only used for new VNet)')
-param vnetAddressPrefix string = ''
+param vnetAddressPrefix array = []
 
 @description('Address prefix for the agent subnet. The default value is 192.168.0.0/24 but you can choose any size /26 or any class like 10.0.0.0 or 172.168.0.0')
 param agentSubnetPrefix string = ''
@@ -141,10 +141,10 @@ param dnsZoneNames array = [
   'privatelink.analysis.windows.net'
 ]
 
-var projectName = toLower('${firstProjectName}${uniqueSuffix}')
-var cosmosDBName = toLower('${aiServices}${uniqueSuffix}cosmosdb')
-var aiSearchName = toLower('${aiServices}${uniqueSuffix}search')
-var azureStorageName = toLower('${aiServices}${uniqueSuffix}storage')
+param projectName string = toLower('${firstProjectName}${uniqueSuffix}')
+param cosmosDBName string = toLower('${aiServices}${uniqueSuffix}cosmosdb')
+param aiSearchName string = toLower('${aiServices}${uniqueSuffix}search')
+param azureStorageName string = toLower('${aiServices}${uniqueSuffix}storage')
 
 // Check if existing resources have been passed in
 var storagePassedIn = azureStorageAccountResourceId != ''
@@ -276,6 +276,7 @@ resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' existing = 
 module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.bicep' = {
   name: '${uniqueSuffix}-private-endpoint'
   params: {
+    location: location
     aiAccountName: aiAccount.outputs.accountName // AI Services to secure
     aiSearchName: aiDependencies.outputs.aiSearchName // AI Search to secure
     storageName: aiDependencies.outputs.azureStorageName // Storage to secure

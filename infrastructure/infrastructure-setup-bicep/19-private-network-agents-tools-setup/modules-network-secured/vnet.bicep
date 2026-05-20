@@ -30,7 +30,7 @@ param peSubnetName string = 'pe-subnet'
 param mcpSubnetName string = 'mcp-subnet'
 
 @description('Address space for the VNet')
-param vnetAddressPrefix string = ''
+param vnetAddressPrefix array = []
 
 @description('Address prefix for the agent subnet')
 param agentSubnetPrefix string = ''
@@ -41,11 +41,11 @@ param peSubnetPrefix string = ''
 @description('Address prefix for the MCP subnet')
 param mcpSubnetPrefix string = ''
 
-var defaultVnetAddressPrefix = '192.168.0.0/16'
+var defaultVnetAddressPrefix = ['192.168.0.0/16']
 var vnetAddress = empty(vnetAddressPrefix) ? defaultVnetAddressPrefix : vnetAddressPrefix
-var agentSubnet = empty(agentSubnetPrefix) ? cidrSubnet(vnetAddress, 24, 0) : agentSubnetPrefix
-var peSubnet = empty(peSubnetPrefix) ? cidrSubnet(vnetAddress, 24, 1) : peSubnetPrefix
-var mcpSubnet = empty(mcpSubnetPrefix) ? cidrSubnet(vnetAddress, 24, 2) : mcpSubnetPrefix
+var agentSubnet = agentSubnetPrefix
+var peSubnet = peSubnetPrefix
+var mcpSubnet = mcpSubnetPrefix
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-05-01' = {
   name: vnetName
@@ -77,20 +77,20 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-05-01' = {
           addressPrefix: peSubnet
         }
       }
-      {
-        name: mcpSubnetName
-        properties: {
-          addressPrefix: mcpSubnet
-          delegations: [
-            {
-              name: 'Microsoft.App/environments'
-              properties: {
-                serviceName: 'Microsoft.App/environments'
-              }
-            }
-          ]
-        }
-      }
+      // {
+      //   name: mcpSubnetName
+      //   properties: {
+      //     addressPrefix: mcpSubnet
+      //     delegations: [
+      //       {
+      //         name: 'Microsoft.App/environments'
+      //         properties: {
+      //           serviceName: 'Microsoft.App/environments'
+      //         }
+      //       }
+      //     ]
+      //   }
+      // }
     ]
   }
 }

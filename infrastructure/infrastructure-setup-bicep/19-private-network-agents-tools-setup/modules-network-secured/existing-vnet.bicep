@@ -85,7 +85,7 @@ module peSubnet 'subnet.bicep' = {
 }
 
 // Create the MCP subnet for user-deployed Container Apps
-module mcpSubnet 'subnet.bicep' = {
+module mcpSubnet 'subnet.bicep' = if (!empty(mcpSubnetName)) {
   name: 'mcp-subnet-${uniqueString(deployment().name, mcpSubnetName)}'
   scope: resourceGroup(vnetResourceGroupName)
   params: {

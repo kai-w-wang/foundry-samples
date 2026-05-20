@@ -23,7 +23,7 @@ param peSubnetName string = 'pe-subnet'
 param mcpSubnetName string = 'mcp-subnet'
 
 @description('Address space for the VNet (only used for new VNet)')
-param vnetAddressPrefix string = ''
+param vnetAddressPrefix array = []
 
 @description('Address prefix for the agent subnet')
 param agentSubnetPrefix string = ''

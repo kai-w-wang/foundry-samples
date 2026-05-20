@@ -22,6 +22,7 @@ Security Benefits:
 - Prevents data exfiltration through network
 */
 
+param location string // = resourceGroup().location
 // Resource names and identifiers
 @description('Name of the AI Foundry account')
 param aiAccountName string
@@ -118,7 +119,7 @@ resource peSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' existin
 // - Establishes private connection to AI Services account
 resource aiAccountPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
   name: '${aiAccountName}-private-endpoint'
-  location: resourceGroup().location
+  location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer hub subnet
     privateLinkServiceConnections: [
@@ -140,7 +141,7 @@ resource aiAccountPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01
 // - Establishes private connection to AI Search service
 resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
   name: '${aiSearchName}-private-endpoint'
-  location: resourceGroup().location
+  location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer hub subnet
     privateLinkServiceConnections: [
@@ -162,7 +163,7 @@ resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
 // - Establishes private connection to blob storage
 resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
   name: '${storageName}-private-endpoint'
-  location: resourceGroup().location
+  location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer hub subnet
     privateLinkServiceConnections: [
@@ -181,7 +182,7 @@ resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' 
 
 resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
   name: '${cosmosDBName}-private-endpoint'
-  location: resourceGroup().location
+  location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer hub subnet
     privateLinkServiceConnections: [
@@ -204,7 +205,7 @@ resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
 // - Only created if fabricWorkspaceResourceId is provided
 resource fabricPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = if (fabricPassedIn) {
   name: '${fabricWorkspaceName}-fabric-private-endpoint'
-  location: resourceGroup().location
+  location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer private endpoint subnet
     privateLinkServiceConnections: [
