@@ -1,31 +1,31 @@
-// az deployment group create --location southeastasia --template-file main.bicepparam --parameters @main.bicepparam -g mbb-rg-aishared-uat-myw-03
+// az deployment group create --location southeastasia --template-file main.bicepparam --parameters @main.bicepparam -g mbb-rg-aishared-poc-myw-01
 using './main.bicep'
 
 param location = 'southeastasia'
-param aiServices = 'mbb-aif-aifoundry-uat-sea-03'
-param accountName = 'mbb-aif-aifoundry-uat-sea-03'
+param aiServices = 'mbb-aif-aifoundry-poc-sea-01'
+param accountName = 'mbb-aif-aifoundry-poc-sea-01'
 param modelName = 'gpt-4.1'
 param modelFormat = 'OpenAI'
 param modelVersion = '2025-04-14'
 param modelSkuName = 'GlobalStandard'
 param modelCapacity = 1
-param firstProjectName = 'mbb-proj-espi-uat-sea-03'
+param firstProjectName = 'mbb-proj-espi-poc-sea-01'
 param projectName = firstProjectName
-param projectDescription = 'mbb-proj-espi-uat-sea-03'
-param displayName = 'mbb-proj-espi-uat-sea-03'
-param peSubnetName = 'mbb-snet-pe-aifoundry-uat-sea-03'
+param projectDescription = 'mbb-proj-espi-poc-sea-01'
+param displayName = 'mbb-proj-espi-poc-sea-01'
+param peSubnetName = 'mbb-snet-pe-aifoundry-poc-sea-01'
 
 // Resource IDs for existing resources
 // If you provide these, the deployment will use the existing resources instead of creating new ones
-param existingVnetResourceId = '' //'/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-aishared-uat-myw-03/providers/Microsoft.Network/virtualNetworks/mbb-vnet-aifoundry-uat-sea-03'
-param vnetName = 'mbb-vnet-aifoundry-uat-sea-03'
-param agentSubnetName = 'mbb-snet-agt-aifoundry-uat-sea-03'
-param aiSearchName = 'mbb-srch-espi-uat-sea-03'
-param aiSearchResourceId = '' // '/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-espi-uat-myw-03/providers/Microsoft.Search/searchServices/mbb-srch-espi-uat-sea-03'
-param azureStorageName = 'mbbsaaifoundryuatsea03'
-param azureStorageAccountResourceId = '' //'/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-aishared-uat-myw-03/providers/Microsoft.Storage/storageAccounts/mbbsaaifoundryuatsea02'
-param cosmosDBName = 'mbb-cosmos-aiagent-uat-sea-03'
-param azureCosmosDBAccountResourceId = '' //'/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-aishared-uat-myw-03/providers/Microsoft.DocumentDB/databaseAccounts/mbb-cosmos-aiagent-uat-sea-03'
+param existingVnetResourceId = '' //'/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-aishared-poc-myw-01/providers/Microsoft.Network/virtualNetworks/mbb-vnet-aifoundry-poc-sea-01'
+param vnetName = 'mbb-vnet-aifoundry-poc-sea-01'
+param agentSubnetName = 'mbb-snet-agt-aifoundry-poc-sea-01'
+param aiSearchName = 'mbb-srch-espi-poc-sea-01'
+param aiSearchResourceId = '' // '/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-espi-poc-myw-01/providers/Microsoft.Search/searchServices/mbb-srch-espi-poc-sea-01'
+param azureStorageName = 'mbbsaaifoundrypocsea01'
+param azureStorageAccountResourceId = '' //'/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-aishared-poc-myw-01/providers/Microsoft.Storage/storageAccounts/mbbsaaifoundryuatsea02'
+param cosmosDBName = 'mbb-cosmos-aiagent-poc-sea-01'
+param azureCosmosDBAccountResourceId = '' //'/subscriptions/e7616c81-ff17-4d0e-8b76-b69ccf27d000/resourceGroups/mbb-rg-aishared-poc-myw-01/providers/Microsoft.DocumentDB/databaseAccounts/mbb-cosmos-aiagent-poc-sea-01'
 // Pass the DNS zone map here
 // Leave empty to create new DNS zone, add the resource group of existing DNS zone to use it
 param existingDnsZones = {

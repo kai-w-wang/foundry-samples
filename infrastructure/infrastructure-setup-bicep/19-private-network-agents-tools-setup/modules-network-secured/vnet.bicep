@@ -52,9 +52,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-05-01' = {
   location: location
   properties: {
     addressSpace: {
-      addressPrefixes: [
-        vnetAddress
-      ]
+      addressPrefixes: vnetAddress
     }
     subnets: [
       {

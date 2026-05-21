@@ -173,6 +173,8 @@ var trimVnetName = trim(existingVnetName)
 @description('The name of the project capability host to be created')
 param projectCapHost string = 'caphostproj'
 
+param rbacEnabled bool = false
+
 // Create Virtual Network and Subnets
 module vnet 'modules-network-secured/network-agent-vnet.bicep' = {
   name: 'vnet-${trimVnetName}-${uniqueSuffix}-deployment'
@@ -284,7 +286,7 @@ module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.b
     fabricWorkspaceResourceId: fabricWorkspaceResourceId // Microsoft Fabric workspace (optional)
     vnetName: vnet.outputs.virtualNetworkName // VNet containing subnets
     peSubnetName: vnet.outputs.peSubnetName // Subnet for private endpoints
-    suffix: uniqueSuffix // Unique identifier
+    suffix: '' //uniqueSuffix // Unique identifier
     vnetResourceGroupName: vnet.outputs.virtualNetworkResourceGroup
     vnetSubscriptionId: vnet.outputs.virtualNetworkSubscriptionId // Subscription ID for the VNet
     cosmosDBSubscriptionId: cosmosDBSubscriptionId // Subscription ID for Cosmos DB
@@ -346,7 +348,7 @@ module formatProjectWorkspaceId 'modules-network-secured/format-project-workspac
 /*
   Assigns the project SMI the storage blob data contributor role on the storage account
 */
-module storageAccountRoleAssignment 'modules-network-secured/azure-storage-account-role-assignment.bicep' = {
+module storageAccountRoleAssignment 'modules-network-secured/azure-storage-account-role-assignment.bicep' = if (rbacEnabled) {
   name: 'storage-${azureStorageName}-${uniqueSuffix}-deployment'
   scope: resourceGroup(azureStorageSubscriptionId, azureStorageResourceGroupName)
   params: {
@@ -360,7 +362,7 @@ module storageAccountRoleAssignment 'modules-network-secured/azure-storage-accou
 }
 
 // The Comos DB Operator role must be assigned before the caphost is created
-module cosmosAccountRoleAssignments 'modules-network-secured/cosmosdb-account-role-assignment.bicep' = {
+module cosmosAccountRoleAssignments 'modules-network-secured/cosmosdb-account-role-assignment.bicep' = if (rbacEnabled) {
   name: 'cosmos-account-ra-${uniqueSuffix}-deployment'
   scope: resourceGroup(cosmosDBSubscriptionId, cosmosDBResourceGroupName)
   params: {
@@ -374,7 +376,7 @@ module cosmosAccountRoleAssignments 'modules-network-secured/cosmosdb-account-ro
 }
 
 // This role can be assigned before or after the caphost is created
-module aiSearchRoleAssignments 'modules-network-secured/ai-search-role-assignments.bicep' = {
+module aiSearchRoleAssignments 'modules-network-secured/ai-search-role-assignments.bicep' = if (rbacEnabled) {
   name: 'ai-search-ra-${uniqueSuffix}-deployment'
   scope: resourceGroup(aiSearchServiceSubscriptionId, aiSearchServiceResourceGroupName)
   params: {
@@ -410,7 +412,7 @@ module addProjectCapabilityHost 'modules-network-secured/add-project-capability-
 }
 
 // The Storage Blob Data Owner role must be assigned after the caphost is created
-module storageContainersRoleAssignment 'modules-network-secured/blob-storage-container-role-assignments.bicep' = {
+module storageContainersRoleAssignment 'modules-network-secured/blob-storage-container-role-assignments.bicep' = if (rbacEnabled) {
   name: 'storage-containers-ra-${uniqueSuffix}-deployment'
   scope: resourceGroup(azureStorageSubscriptionId, azureStorageResourceGroupName)
   params: {
@@ -424,7 +426,7 @@ module storageContainersRoleAssignment 'modules-network-secured/blob-storage-con
 }
 
 // The Cosmos Built-In Data Contributor role must be assigned after the caphost is created
-module cosmosContainerRoleAssignments 'modules-network-secured/cosmos-container-role-assignments.bicep' = {
+module cosmosContainerRoleAssignments 'modules-network-secured/cosmos-container-role-assignments.bicep' = if (rbacEnabled) {
   name: 'cosmos-containers-ra-${uniqueSuffix}-deployment'
   scope: resourceGroup(cosmosDBSubscriptionId, cosmosDBResourceGroupName)
   params: {

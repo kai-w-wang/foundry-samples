@@ -122,9 +122,10 @@ resource aiAccountPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01
   location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer hub subnet
+    customNetworkInterfaceName: '${aiAccountName}-private-endpoint-nic'
     privateLinkServiceConnections: [
       {
-        name: '${aiAccountName}-private-link-service-connection'
+        name: '${aiAccountName}-private-link-service-connection'        
         properties: {
           privateLinkServiceId: aiAccount.id
           groupIds: ['account'] // Target AI Services account
@@ -144,6 +145,7 @@ resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
   location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer hub subnet
+    customNetworkInterfaceName: '${aiSearchName}-private-endpoint-nic'
     privateLinkServiceConnections: [
       {
         name: '${aiSearchName}-private-link-service-connection'
@@ -185,6 +187,7 @@ resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
   location: location
   properties: {
     subnet: { id: peSubnet.id } // Deploy in customer hub subnet
+    customNetworkInterfaceName: '${cosmosDBName}-private-endpoint-nic'
     privateLinkServiceConnections: [
       {
         name: '${cosmosDBName}-private-link-service-connection'
@@ -347,7 +350,7 @@ var fabricDnsZoneId = fabricPassedIn
 resource aiServicesLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(aiServicesDnsZoneRG)) {
   parent: aiServicesPrivateDnsZone
   location: 'global'
-  name: 'aiServices-${suffix}-link'
+  name: 'aiServices${suffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -356,7 +359,7 @@ resource aiServicesLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2
 resource openAiLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(openAiDnsZoneRG)) {
   parent: openAiPrivateDnsZone
   location: 'global'
-  name: 'aiServicesOpenAI-${suffix}-link'
+  name: 'aiServicesOpenAI${suffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -365,7 +368,7 @@ resource openAiLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-
 resource cognitiveServicesLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(cognitiveServicesDnsZoneRG)) {
   parent: cognitiveServicesPrivateDnsZone
   location: 'global'
-  name: 'aiServicesCognitiveServices-${suffix}-link'
+  name: 'aiServicesCognitiveServices${suffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -374,7 +377,7 @@ resource cognitiveServicesLink 'Microsoft.Network/privateDnsZones/virtualNetwork
 resource aiSearchLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(aiSearchDnsZoneRG)) {
   parent: aiSearchPrivateDnsZone
   location: 'global'
-  name: 'aiSearch-${suffix}-link'
+  name: 'aiSearch${suffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -383,7 +386,7 @@ resource aiSearchLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@202
 resource storageLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(storageDnsZoneRG)) {
   parent: storagePrivateDnsZone
   location: 'global'
-  name: 'storage-${suffix}-link'
+  name: 'storage${suffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -392,7 +395,7 @@ resource storageLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024
 resource cosmosDBLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(cosmosDBDnsZoneRG)) {
   parent: cosmosDBPrivateDnsZone
   location: 'global'
-  name: 'cosmosDB-${suffix}-link'
+  name: 'cosmosDB${suffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -403,7 +406,7 @@ resource cosmosDBLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@202
 resource fabricLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (fabricPassedIn && empty(fabricDnsZoneRG)) {
   parent: fabricPrivateDnsZone
   location: 'global'
-  name: 'fabric-${suffix}-link'
+  name: 'fabric${suffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false

@@ -113,7 +113,7 @@ module formatProjectWorkspaceId 'modules-network-secured/format-project-workspac
 }
 
 // Assign storage account role
-module storageAccountRoleAssignment 'modules-network-secured/azure-storage-account-role-assignment.bicep' = {
+module storageAccountRoleAssignment 'modules-network-secured/azure-storage-account-role-assignment.bicep' = if (false)  {
   name: 'storage-${existingStorageName}-${uniqueSuffix}-deployment'
   scope: resourceGroup(storageSubscriptionId, storageResourceGroupName)
   params: {
@@ -123,7 +123,7 @@ module storageAccountRoleAssignment 'modules-network-secured/azure-storage-accou
 }
 
 // Assign Cosmos DB account role
-module cosmosAccountRoleAssignments 'modules-network-secured/cosmosdb-account-role-assignment.bicep' = {
+module cosmosAccountRoleAssignments 'modules-network-secured/cosmosdb-account-role-assignment.bicep' = if (false) {
   name: 'cosmos-account-ra-${finalProjectName}-${uniqueSuffix}-deployment'
   scope: resourceGroup(cosmosDBSubscriptionId, cosmosDBResourceGroupName)
   params: {
@@ -133,7 +133,7 @@ module cosmosAccountRoleAssignments 'modules-network-secured/cosmosdb-account-ro
 }
 
 // Assign AI Search role
-module aiSearchRoleAssignments 'modules-network-secured/ai-search-role-assignments.bicep' = {
+module aiSearchRoleAssignments 'modules-network-secured/ai-search-role-assignments.bicep' = if (false)  {
   name: 'ai-search-ra-${finalProjectName}-${uniqueSuffix}-deployment'
   scope: resourceGroup(aiSearchSubscriptionId, aiSearchResourceGroupName)
   params: {
