@@ -34,12 +34,23 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' exist
   scope: resourceGroup()
 }
 
+param projectIdentityName string = ''
+resource existingIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = if (!empty(projectIdentityName)) {
+  name: projectIdentityName
+}
+
 resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: account
   name: projectName
   location: location
-  identity: {
+  // kind: 'AIServices'
+  identity: empty(projectIdentityName) ? {
     type: 'SystemAssigned'
+  } : {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${existingIdentity.id}': {}
+    }
   }
   properties: {
     description: projectDescription
@@ -92,7 +103,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
 
 output projectName string = project.name
 output projectId string = project.id
-output projectPrincipalId string = project.identity.principalId
+output projectPrincipalId string = empty(projectIdentityId) ? project.identity.principalId : existingIdentity!.properties.principalId
 
 #disable-next-line BCP053
 output projectWorkspaceId string = project.properties.internalId

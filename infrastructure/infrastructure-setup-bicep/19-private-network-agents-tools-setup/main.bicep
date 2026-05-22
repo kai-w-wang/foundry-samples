@@ -172,7 +172,7 @@ var trimVnetName = trim(existingVnetName)
 
 @description('The name of the project capability host to be created')
 param projectCapHost string = 'caphostproj'
-
+param projectIdentityName string = ''
 param rbacEnabled bool = false
 
 // Create Virtual Network and Subnets
@@ -312,6 +312,7 @@ module aiProject 'modules-network-secured/ai-project-identity.bicep' = {
   params: {
     // workspace organization
     projectName: projectName
+    projectIdentityName: projectIdentityName
     projectDescription: projectDescription
     displayName: displayName
     location: location
@@ -390,7 +391,7 @@ module aiSearchRoleAssignments 'modules-network-secured/ai-search-role-assignmen
 }
 
 // This module creates the capability host for the project and account
-module addProjectCapabilityHost 'modules-network-secured/add-project-capability-host.bicep' = {
+module addProjectCapabilityHost 'modules-network-secured/add-project-capability-host.bicep' = if (!empty(projectCapHost)) {
   name: 'capabilityHost-configuration-${uniqueSuffix}-deployment'
   params: {
     accountName: aiAccount.outputs.accountName
@@ -398,7 +399,7 @@ module addProjectCapabilityHost 'modules-network-secured/add-project-capability-
     cosmosDBConnection: aiProject.outputs.cosmosDBConnection
     azureStorageConnection: aiProject.outputs.azureStorageConnection
     aiSearchConnection: aiProject.outputs.aiSearchConnection
-    projectCapHost: projectCapHost
+    projectCapHost: projectCapHost    
   }
   dependsOn: [
     aiSearch // Ensure AI Search exists
@@ -426,7 +427,7 @@ module storageContainersRoleAssignment 'modules-network-secured/blob-storage-con
 }
 
 // The Cosmos Built-In Data Contributor role must be assigned after the caphost is created
-module cosmosContainerRoleAssignments 'modules-network-secured/cosmos-container-role-assignments.bicep' = if (rbacEnabled) {
+module cosmosContainerRoleAssignments 'modules-network-secured/cosmos-container-role-assignments.bicep' = {
   name: 'cosmos-containers-ra-${uniqueSuffix}-deployment'
   scope: resourceGroup(cosmosDBSubscriptionId, cosmosDBResourceGroupName)
   params: {
@@ -434,8 +435,8 @@ module cosmosContainerRoleAssignments 'modules-network-secured/cosmos-container-
     projectWorkspaceId: formatProjectWorkspaceId.outputs.projectWorkspaceIdGuid
     projectPrincipalId: aiProject.outputs.projectPrincipalId
   }
-  dependsOn: [
-    addProjectCapabilityHost
-    storageContainersRoleAssignment
-  ]
+  // dependsOn: [
+  //   addProjectCapabilityHost
+  //   storageContainersRoleAssignment
+  // ]
 }
